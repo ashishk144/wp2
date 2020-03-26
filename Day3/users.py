@@ -10,6 +10,8 @@ class User(Base):
     user_id = Column(String, primary_key = True)
     pwd = Column(String, nullable = False)
     timestamp = Column(DateTime(timezone = True), nullable = False)
+    def __str__(self):
+    	return self.user_id +" "+ self.pwd+" " + str(self.timestamp)
 
 engine = create_engine(os.getenv("DATABASE_URL"), echo=True)
 
