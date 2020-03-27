@@ -3,6 +3,7 @@ from sqlalchemy.orm import sessionmaker
 from users import *
 import os
 from datetime import datetime
+from sqlalchemy import desc
 
 app = Flask(__name__)
 engine = create_engine(os.getenv("DATABASE_URL"), echo=True)
@@ -11,9 +12,7 @@ session = Session()
  
 @app.route("/admin")
 def admin():
-   usrs =   session.query(User).all()
-   # for i in usrs:
-      # print(i)
+   usrs =   session.query(User).order_by(desc(User.timestamp)).all()
    return render_template("/Admin.html", data = usrs)
 
 @app.route("/")
@@ -22,9 +21,6 @@ def default():
 
 @app.route('/success/<name>')
 def success(name, pwd):
-   # print("name ", name)
-   # print("pwd", pwd)
-   # d = {'name':name, 'pwd':pwd}
    return render_template("/Success.html", data = name)
  
 @app.route('/register',methods = ['POST', 'GET'])
@@ -34,7 +30,6 @@ def register():
       pwd = request.form['psw']
       pwdcheck = request.form['psw-repeat']
       print(user,pwd,pwdcheck)
-      # return render_template('/Register.html')
       data = session.query(User).filter_by(user_id=user).all()
       if(len(data) > 0):
       	return "User already exists"
