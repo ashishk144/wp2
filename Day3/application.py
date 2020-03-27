@@ -20,7 +20,7 @@ def default():
    return redirect(url_for('register'))
 
 @app.route('/success/<name>')
-def success(name, pwd):
+def success(name):
    return render_template("/Success.html", data = name)
  
 @app.route('/register',methods = ['POST', 'GET'])
