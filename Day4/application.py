@@ -19,43 +19,53 @@ db = scoped_session(sessionmaker(bind=engine))
  
 @app.route("/admin")
 def admin():
-   usrs =   db.query(User).order_by(desc(User.timestamp)).all()
-   return render_template("/Admin.html", data = usrs)
+    usrs =   db.query(User).order_by(desc(User.timestamp)).all()
+    return render_template("/Admin.html", data = usrs)
 
 @app.route("/")
 def default():
-   return redirect(url_for('register'))
+    return redirect(url_for('register'))
 
 @app.route('/success/<name>')
 def success(name):
-   return render_template("/Success.html", data = name)
+    return render_template("/Success.html", data = name)
  
 @app.route('/register',methods = ['POST', 'GET'])
 def register():
-   if request.method == 'POST':
-      user = request.form['email']
-      pwd = request.form['psw']
-      pwdcheck = request.form['psw-repeat']
-      print(user,pwd,pwdcheck)
-      data = db.query(User).filter_by(user_id=user).all()
-      if(len(data) > 0):
-      	return "User already exists"
-      if(pwd == pwdcheck):
-         try:
-            usr = User(user_id = user, pwd = pwd, timestamp = datetime.now())
-            db.add(usr)
-            db.commit()
-            return redirect(url_for('success',name = user))
-         except Exception(e):
-            return redirect(url_for('error'))
-      return redirect(url_for('error'))
-   else:
-      return render_template('/Register.html')
- 
+    if request.method == 'POST':
+        user = request.form['email']
+        pwd = request.form['psw']
+        data = db.query(User).filter_by(user_id=user).all()
+        if(len(data) > 0):
+            return "User already exists"
+        if("@" in user and "." in user):
+            try:
+                usr = User(user_id = user, pwd = pwd, timestamp = datetime.now())
+                db.add(usr)
+                db.commit()
+                return redirect(url_for('success',name = user))
+            except Exception(e):
+                return redirect(url_for('error'))
+        return render_template('/Register.html', message = "Email invalid")
+    else:
+        return render_template('/Register.html')
+
 @app.route('/error')
 def error():
-   return render_template('/Fail.html')
+    return render_template('/Fail.html')
 
+@app.route('/auth', methods = ['POST'])
+def auth():
+    user = request.form['email']
+    pwd = request.form['psw']
+    if("@" not in user or "." not in user):
+        return render_template('/Register.html', message = "Email invalid")
+    data = db.query(User).filter_by(user_id=user).all()
+    if(len(data) <= 0):
+        return render_template('/Register.html', message = "User does not exist")
+    if(data[0].pwd == pwd):
+        return render_template("/User.html")
+    return render_template('/Register.html', message = "Invalid credentials")
 
 if __name__ == '__main__':
-   app.run(debug = True)
+    app.run(debug = True)

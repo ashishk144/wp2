@@ -17,15 +17,17 @@
       <label for="psw"><b>Password</b></label>
       <input type="password" placeholder="Enter Password" name="psw" required>
 
-      <label for="psw-repeat"><b>Repeat Password</b></label>
-      <input type="password" placeholder="Repeat Password" name="psw-repeat" required>
+      <!-- <label for="psw-repeat"><b>Repeat Password</b></label> -->
+      <!-- <input type="password" placeholder="Repeat Password" name="psw-repeat" required> -->
       <hr>
 
       <button type="submit" class="registerbtn">Register</button>
+      <button type="submit" class="registerbtn" formaction = "http://localhost:5000/auth" method = "post">Login</button>
     </div>
 
     <div class="container signin">
-      <p>Already have an account? <a href="#">Sign in</a>.</p>
+      <!-- <p>Already have an account? <a href="#">Sign in</a>.</p> -->
+      <p>{{message}}</p>
     </div>
   </form>
 </body>
