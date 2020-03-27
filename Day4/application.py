@@ -13,7 +13,6 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 
-app = Flask(__name__)
 engine = create_engine(os.getenv("DATABASE_URL"), echo=True)
 db = scoped_session(sessionmaker(bind=engine))
  
@@ -24,6 +23,8 @@ def admin():
 
 @app.route("/")
 def default():
+    if(session.get("user_id") != None and session.get("password") != None):
+        return render_template('User.html', user = session.get("user_id"))
     return redirect(url_for('register'))
 
 @app.route('/success/<name>')
@@ -64,8 +65,16 @@ def auth():
     if(len(data) <= 0):
         return render_template('/Register.html', message = "User does not exist")
     if(data[0].pwd == pwd):
-        return render_template("/User.html")
+        session['user_id'] = user
+        session['password'] = pwd
+        return render_template("/User.html", user = user)
     return render_template('/Register.html', message = "Invalid credentials")
+
+@app.route("/logout")
+def logout():
+    session.pop("user_id", None)
+    session.pop("password", None)
+    return "Logged out"
 
 if __name__ == '__main__':
     app.run(debug = True)
