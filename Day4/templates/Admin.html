@@ -8,6 +8,9 @@
 	<h1>Admin Page!</h1>
 	<div class="container">
 		<div class="row">
+			<div class="col-lg">
+		      <b>S. No.</b>
+		    </div>
 		    <div class="col-lg">
 		      <b>User ID</b>
 		    </div>
@@ -22,6 +25,9 @@
 	{% for value in data %}
 	<div class="container">
 		<div class="row">
+		<div class="col-lg">
+		  {{loop.index}}
+		</div>	
 		<div class="col-lg">
 		  {{value.user_id}}
 		</div>
